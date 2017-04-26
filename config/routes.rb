@@ -1,17 +1,24 @@
+require 'ApiVersionConstraint'
+
 Rails.application.routes.draw do
   devise_for :users
-  
-  get 'hello/index'
 
+  get 'hello/index'
+  # rotas para API
+  namespace :api, defaults: {format: :json}, path: '/' do
+    namespace :v1, path: '/', constraints: ApiVersionConstraint.new(version: 1, default: true) do
+      resources :tasks
+    end
+  end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   	scope module: 'empenho' do
 	  resources :especifications
 	  resources :modalities
 
 	  resources :interests do
-	  	member do       
+	  	member do
       		get :abrir_anexo
-    	end  
+    	end
 	  end
 
 	  resources :companies
@@ -21,7 +28,7 @@ Rails.application.routes.draw do
 	scope module: 'materialcarga' do
 	  resources :equipment
 	  resources :appointments
-	  resources :assistent_appointments	  
+	  resources :assistent_appointments
 	end
 
 	scope module: 'cautela' do
@@ -35,7 +42,7 @@ Rails.application.routes.draw do
 				get :update_ativa_cracha
 				get :update_desativa_cracha
 				get :altera_permission_login
-				put :atualiza_permission_login				
+				put :atualiza_permission_login
 			end
 			collection do
 				get :index_desligados
@@ -45,7 +52,7 @@ Rails.application.routes.draw do
 		resources :sims_dependents do
 			member do
 				get :update_ativa_cracha
-				get :update_desativa_cracha				
+				get :update_desativa_cracha
 			end
 		end
 		resources :sims_employees do
